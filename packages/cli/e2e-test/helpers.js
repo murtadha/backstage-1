@@ -42,13 +42,15 @@ function spawnPiped(cmd, options) {
       process.exit(code);
     }
   });
+
+  const logPrefix = cmd.map(s => s.replace(/.+\//, '')).join(' ');
   child.stdout.on(
     'data',
-    pipeWithPrefix(process.stdout, `[${cmd.join(' ')}].out: `),
+    pipeWithPrefix(process.stdout, `[${logPrefix}].out: `),
   );
   child.stderr.on(
     'data',
-    pipeWithPrefix(process.stderr, `[${cmd.join(' ')}].err: `),
+    pipeWithPrefix(process.stderr, `[${logPrefix}].err: `),
   );
 
   return child;
@@ -133,7 +135,7 @@ async function waitForPageWithText(
       if (findTextAttempts <= maxFindTextAttempts) {
         await browser.visit(path);
         await new Promise(resolve => setTimeout(resolve, intervalMs));
-        continue
+        continue;
       } else {
         throw error;
       }
