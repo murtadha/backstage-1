@@ -1,0 +1,12 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: murt-test
+  description: Artist Lookup
+  url: /test.com
+  image: yahoo.com
+spec:
+  type: service
+  lifecycle: experimental
+  owner: artists@example.com
+  photo: yahoo.com
