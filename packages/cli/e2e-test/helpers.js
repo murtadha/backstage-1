@@ -15,7 +15,9 @@
  */
 
 const childProcess = require('child_process');
-const { spawn } = childProcess;
+const { spawn, execFile: execFileCb } = childProcess;
+const { promisify } = require('util');
+const execFile = promisify(execFileCb);
 
 const EXPECTED_LOAD_ERRORS = /ECONNREFUSED|ECONNRESET|did not get to load all resources/;
 
@@ -54,6 +56,21 @@ function spawnPiped(cmd, options) {
   );
 
   return child;
+}
+
+async function runPlain(cmd, options) {
+  try {
+    const { stdout } = await execFile(cmd[0], cmd.slice(1), {
+      ...options,
+      shell: true,
+    });
+    return stdout.trim();
+  } catch (error) {
+    if (error.stderr) {
+      process.stderr.write(error.stderr);
+    }
+    throw error;
+  }
 }
 
 function handleError(err) {
@@ -149,6 +166,7 @@ function print(msg) {
 
 module.exports = {
   spawnPiped,
+  runPlain,
   handleError,
   waitFor,
   waitForExit,
